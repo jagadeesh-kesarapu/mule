@@ -6,14 +6,15 @@
  */
 package org.mule.runtime.module.extension.internal.config.dsl;
 
+import static java.util.Arrays.asList;
 import static org.mule.metadata.java.utils.JavaTypeUtils.getType;
 import static org.mule.runtime.config.spring.dsl.processor.TypeDefinition.fromType;
 import static org.mule.runtime.module.extension.internal.util.NameUtils.getTopLevelTypeName;
 import static org.mule.runtime.module.extension.internal.util.NameUtils.hyphenize;
 import org.mule.metadata.api.model.ObjectType;
-import org.mule.metadata.java.utils.JavaTypeUtils;
 import org.mule.runtime.config.spring.dsl.api.ComponentBuildingDefinition;
-import org.mule.runtime.config.spring.dsl.processor.TypeDefinition;
+
+import java.util.List;
 
 final class TopLevelParameterDefinitionProvider extends AbstractDefinitionProvider
 {
@@ -26,10 +27,12 @@ final class TopLevelParameterDefinitionProvider extends AbstractDefinitionProvid
         this.type = type;
     }
 
-    public void parse() {
+    @Override
+    public List<ComponentBuildingDefinition> parse()
+    {
 
-        definition.withIdentifier(hyphenize(getTopLevelTypeName(type)))
-                .withTypeDefinition(fromType(getType(type)))
-                .with
+        definition.withIdentifier(hyphenize(getTopLevelTypeName(type))).withTypeDefinition(fromType(getType(type)));
+
+        return asList(definition.build());
     }
 }

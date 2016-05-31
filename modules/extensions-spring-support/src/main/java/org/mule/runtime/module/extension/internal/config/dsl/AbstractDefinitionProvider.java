@@ -8,12 +8,16 @@ package org.mule.runtime.module.extension.internal.config.dsl;
 
 import org.mule.runtime.config.spring.dsl.api.ComponentBuildingDefinition;
 
-abstract class AbstractDefinitionProvider
+import java.util.List;
+
+public abstract class AbstractDefinitionProvider
 {
     protected final ComponentBuildingDefinition.Builder definition;
 
-    AbstractDefinitionProvider(ComponentBuildingDefinition.Builder definition)
+    protected AbstractDefinitionProvider(ComponentBuildingDefinition.Builder definition)
     {
         this.definition = definition.copy();
     }
+
+    public abstract List<ComponentBuildingDefinition> parse();
 }

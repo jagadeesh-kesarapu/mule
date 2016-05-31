@@ -11,8 +11,8 @@ import static java.util.stream.Collectors.toList;
 import static org.mule.runtime.config.spring.dsl.model.ApplicationModel.PROCESSING_STRATEGY_ATTRIBUTE;
 import static org.mule.runtime.config.spring.dsl.spring.CommonBeanDefinitionCreator.areMatchingTypes;
 import static org.mule.runtime.config.spring.util.ProcessingStrategyUtils.parseProcessingStrategy;
-import org.mule.runtime.config.spring.dsl.api.ComponentBuildingDefinition;
 import org.mule.runtime.config.spring.dsl.api.AttributeDefinition;
+import org.mule.runtime.config.spring.dsl.api.ComponentBuildingDefinition;
 import org.mule.runtime.config.spring.dsl.api.TypeConverter;
 import org.mule.runtime.config.spring.dsl.model.ComponentModel;
 import org.mule.runtime.config.spring.dsl.processor.AttributeDefinitionVisitor;
@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,10 +59,9 @@ class ComponentConfigurationBuilder
 
     public void processConfiguration()
     {
-        componentBuildingDefinition.getIgnoredConfigurationParameters().stream().forEach( ignoredParameter -> {
-            simpleParameters.remove(ignoredParameter);
-        });
-        for (Map.Entry<String, AttributeDefinition> definitionEntry : componentBuildingDefinition.getSetterParameterDefinitions().entrySet())
+        componentBuildingDefinition.getIgnoredConfigurationParameters().stream().forEach(simpleParameters::remove);
+
+        for (Map.Entry<String, AttributeDefinition> definitionEntry : componentBuildingDefinition.getSetterParameterDefinitions().entries())
         {
             definitionEntry.getValue().accept(setterVisitor(definitionEntry.getKey()));
         }
