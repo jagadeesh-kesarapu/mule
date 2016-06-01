@@ -10,13 +10,11 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import org.mule.extension.http.api.HttpConnector;
-import org.mule.functional.junit4.ExtensionFunctionalTestCase;
-import org.mule.module.socket.api.SocketsExtension;
 import org.mule.runtime.core.api.MessagingException;
 import org.mule.runtime.core.construct.Flow;
 import org.mule.runtime.core.util.concurrent.Latch;
 import org.mule.runtime.module.http.api.requester.proxy.ProxyConfig;
+import org.mule.runtime.module.http.functional.AbstractHttpTestCase;
 import org.mule.runtime.module.http.internal.request.DefaultHttpRequester;
 import org.mule.runtime.module.http.internal.request.NtlmProxyConfig;
 import org.mule.tck.junit4.rule.DynamicPort;
@@ -36,7 +34,7 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
-public class HttpRequestProxyConfigTestCase extends ExtensionFunctionalTestCase
+public class HttpRequestProxyConfigTestCase extends AbstractHttpTestCase
 {
 
     private static final String PROXY_HOST = "localhost";
@@ -76,12 +74,6 @@ public class HttpRequestProxyConfigTestCase extends ExtensionFunctionalTestCase
     protected String getConfigFile()
     {
         return "http-request-proxy-config.xml";
-    }
-
-    @Override
-    protected Class<?>[] getAnnotatedExtensionClasses()
-    {
-        return new Class<?>[] {SocketsExtension.class, HttpConnector.class};
     }
 
     @Before
