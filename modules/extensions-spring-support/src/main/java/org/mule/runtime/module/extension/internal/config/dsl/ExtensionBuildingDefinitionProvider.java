@@ -20,7 +20,6 @@ import org.mule.metadata.api.model.DictionaryType;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.metadata.api.model.ObjectType;
 import org.mule.metadata.api.visitor.MetadataTypeVisitor;
-import org.mule.runtime.config.spring.MuleArtifactContext;
 import org.mule.runtime.config.spring.dsl.api.ComponentBuildingDefinition;
 import org.mule.runtime.config.spring.dsl.api.ComponentBuildingDefinitionProvider;
 import org.mule.runtime.core.api.MuleContext;
@@ -39,7 +38,6 @@ import org.mule.runtime.extension.api.introspection.property.XmlModelProperty;
 import org.mule.runtime.extension.api.introspection.source.HasSourceModels;
 import org.mule.runtime.extension.api.introspection.source.SourceModel;
 import org.mule.runtime.module.extension.internal.config.ExtensionConfig;
-import org.mule.runtime.module.extension.internal.config.dsl.config.ConfigurationDefinitionProvider;
 import org.mule.runtime.module.extension.internal.introspection.SubTypesMappingContainer;
 
 import com.google.common.collect.HashMultimap;
@@ -74,7 +72,7 @@ public class ExtensionBuildingDefinitionProvider implements ComponentBuildingDef
     @Override
     public void init(MuleContext muleContext)
     {
-        extensionManager = MuleArtifactContext.getCurrentMuleContext().get().getExtensionManager();
+        extensionManager = muleContext.getExtensionManager();
         checkState(extensionManager != null, "Could not obtain the ExtensionManager");
 
         extensionManager.getExtensions().forEach(this::registerExtensionParsers);
@@ -121,7 +119,7 @@ public class ExtensionBuildingDefinitionProvider implements ComponentBuildingDef
                 @Override
                 public void onConfiguration(ConfigurationModel model)
                 {
-                    definitions.addAll(new ConfigurationDefinitionProvider(definition).parse());
+                    //definitions.addAll(new ConfigurationDefinitionProvider(definition).parse());
                 }
 
                 @Override
@@ -162,7 +160,7 @@ public class ExtensionBuildingDefinitionProvider implements ComponentBuildingDef
                 String name = hyphenize(getTopLevelTypeName(objectType));
                 if (topLevelParameters.put(extensionModel, name))
                 {
-                    definitions.addAll(new TopLevelParameterDefinitionProvider(definition, objectType).parse());
+                    definitions.add(new TopLevelParameterParser(definition, objectType).parse());
                 }
             }
 

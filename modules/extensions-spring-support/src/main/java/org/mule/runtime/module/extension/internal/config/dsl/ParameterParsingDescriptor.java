@@ -9,7 +9,6 @@ package org.mule.runtime.module.extension.internal.config.dsl;
 import org.mule.metadata.api.model.MetadataType;
 import org.mule.runtime.config.spring.dsl.api.ComponentBuildingDefinition;
 import org.mule.runtime.extension.api.introspection.parameter.ParameterModel;
-import org.mule.runtime.module.extension.internal.config.ElementDescriptor;
 
 import java.lang.reflect.Field;
 
@@ -23,6 +22,7 @@ import org.w3c.dom.Element;
  */
 class ParameterParsingDescriptor
 {
+
     private final ComponentBuildingDefinition.Builder definition;
     private final String fieldName;
     private final String childElementName;
@@ -33,11 +33,11 @@ class ParameterParsingDescriptor
      * Creates a new instance which contains the information required to parse
      * an {@link Element} to a {@link Field}
      *
-     * @param rootElement          the {@link ElementDescriptor} of the {@link Element}
-     * @param fieldName          the name of the {@link Field} tha will be populated with this element's value
-     * @param childElementName   the name of the child {@link Element} that has to be parsed
-     * @param metadataType    the {@link MetadataType} of the {@link Field}
-     * @param defaultValue    the {@code defaultValue} of the {@link Field}
+     * @param definition       the {@link ComponentBuildingDefinition.Builder} on which the parameter is being defined
+     * @param fieldName        the name of the {@link Field} tha will be populated with this element's value
+     * @param childElementName the name of the child {@link Element} that has to be parsed
+     * @param metadataType     the {@link MetadataType} of the {@link Field}
+     * @param defaultValue     the {@code defaultValue} of the {@link Field}
      */
     ParameterParsingDescriptor(ComponentBuildingDefinition.Builder definition, String fieldName, String childElementName, MetadataType metadataType, Object defaultValue)
     {

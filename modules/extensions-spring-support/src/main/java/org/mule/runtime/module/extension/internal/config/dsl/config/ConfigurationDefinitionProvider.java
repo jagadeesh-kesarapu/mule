@@ -7,21 +7,17 @@
 package org.mule.runtime.module.extension.internal.config.dsl.config;
 
 import static org.mule.runtime.config.spring.dsl.processor.TypeDefinition.fromType;
-import org.mule.runtime.config.spring.dsl.api.AttributeDefinition;
 import org.mule.runtime.config.spring.dsl.api.ComponentBuildingDefinition;
 import org.mule.runtime.config.spring.dsl.api.ComponentBuildingDefinition.Builder;
 import org.mule.runtime.extension.api.introspection.config.ConfigurationModel;
 import org.mule.runtime.extension.api.runtime.ConfigurationProvider;
 import org.mule.runtime.module.extension.internal.config.dsl.AbstractDefinitionProvider;
-import org.mule.runtime.module.extension.internal.config.dsl.GuachiParserDelegate;
-
-import java.util.List;
 
 public class ConfigurationDefinitionProvider extends AbstractDefinitionProvider
 {
 
     private final ConfigurationModel configurationModel;
-    private GuachiParserDelegate parserDelegate = new GuachiParserDelegate();
+    //private GuachiParserDelegate parserDelegate = new GuachiParserDelegate();
 
     public ConfigurationDefinitionProvider(Builder definition, ConfigurationModel configurationModel)
     {
@@ -30,13 +26,15 @@ public class ConfigurationDefinitionProvider extends AbstractDefinitionProvider
     }
 
     @Override
-    public List<ComponentBuildingDefinition> parse()
+    public ComponentBuildingDefinition parse()
     {
         Builder builder = definition.withIdentifier(configurationModel.getName())
                 .withTypeDefinition(fromType(ConfigurationProvider.class))
                 .withObjectFactoryType(ConfigurationProviderObjectFactory.class);
 
-        parserDelegate.getResolverSet(builder, configurationModel.getParameterModels());
+        //parserDelegate.getResolverSet(builder, configurationModel.getParameterModels());
+
+        return null;
 
     }
 }

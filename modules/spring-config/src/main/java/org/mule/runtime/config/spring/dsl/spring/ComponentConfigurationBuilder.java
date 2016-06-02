@@ -18,6 +18,7 @@ import org.mule.runtime.config.spring.dsl.model.ComponentModel;
 import org.mule.runtime.config.spring.dsl.processor.AttributeDefinitionVisitor;
 import org.mule.runtime.core.api.processor.ProcessingStrategy;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ import org.springframework.beans.factory.support.ManagedList;
  */
 class ComponentConfigurationBuilder
 {
+
     private static final Logger logger = LoggerFactory.getLogger(ComponentConfigurationBuilder.class);
 
     private final BeanDefinitionBuilderHelper beanDefinitionBuilderHelper;
@@ -61,6 +63,14 @@ class ComponentConfigurationBuilder
     {
         componentBuildingDefinition.getIgnoredConfigurationParameters().stream().forEach(simpleParameters::remove);
 
+        componentBuildingDefinition.getSetterParameterDefinitions().asMap().entrySet().forEach(definitionEntry -> {
+            Collection<AttributeDefinition> values = definitionEntry.getValue();
+            if (values.size() == 1) {
+                values.stream().findFirst().get().accept(setterVisitor(definitionEntry.getKey()));
+            } else if (values.size() > 1) {
+
+            }
+        });
         for (Map.Entry<String, AttributeDefinition> definitionEntry : componentBuildingDefinition.getSetterParameterDefinitions().entries())
         {
             definitionEntry.getValue().accept(setterVisitor(definitionEntry.getKey()));
@@ -111,9 +121,9 @@ class ComponentConfigurationBuilder
             }
             Object bean = cdm.getBeanDefinition() != null ? cdm.getBeanDefinition() : cdm.getBeanReference();
             return new BeanValueTypePair(beanDefinitionType, bean);
-        }).filter(beanDefinitionTypePair -> {
-            return beanDefinitionTypePair != null;
-        }).collect(toList());
+        })
+                .filter(beanDefinitionTypePair -> beanDefinitionTypePair != null)
+                .collect(toList());
     }
 
     private ConfigurableAttributeDefinitionVisitor constructorVisitor()
@@ -201,23 +211,18 @@ class ComponentConfigurationBuilder
         @Override
         public void onComplexChildList(Class<?> type)
         {
-            List<BeanValueTypePair> matchingBeanValueTypePairs = complexParameters.stream().filter(beanDefinitionTypePair -> {
-                return areMatchingTypes(type, beanDefinitionTypePair.getType());
-            }).collect(toList());
+            List<BeanValueTypePair> matchingBeanValueTypePairs = complexParameters.stream()
+                    .filter(beanDefinitionTypePair -> areMatchingTypes(type, beanDefinitionTypePair.getType()))
+                    .collect(toList());
 
-            matchingBeanValueTypePairs.stream().forEach(beanDefinitionTypePair -> {
-                complexParameters.remove(beanDefinitionTypePair);
-            });
-
+            matchingBeanValueTypePairs.stream().forEach(complexParameters::remove);
             valuePopulator.accept(constructManagedList(fromBeanDefinitionTypePairToBeanDefinition(matchingBeanValueTypePairs)));
         }
 
         @Override
         public void onComplexChild(Class<?> type)
         {
-            Optional<BeanValueTypePair> value = complexParameters.stream().filter(beanDefinitionTypePair -> {
-                return areMatchingTypes(type, beanDefinitionTypePair.getType());
-            }).findFirst();
+            Optional<BeanValueTypePair> value = complexParameters.stream().filter(beanDefinitionTypePair -> areMatchingTypes(type, beanDefinitionTypePair.getType())).findFirst();
             value.ifPresent(beanDefinitionTypePair -> {
                 complexParameters.remove(beanDefinitionTypePair);
                 valuePopulator.accept(beanDefinitionTypePair.getBean());
@@ -241,9 +246,7 @@ class ComponentConfigurationBuilder
 
     private List<Object> fromBeanDefinitionTypePairToBeanDefinition(List<BeanValueTypePair> undefinedComplexParameters)
     {
-        return undefinedComplexParameters.stream().map(beanDefinitionTypePair -> {
-            return beanDefinitionTypePair.getBean();
-        }).collect(toList());
+        return undefinedComplexParameters.stream().map(BeanValueTypePair::getBean).collect(toList());
     }
 
 }
