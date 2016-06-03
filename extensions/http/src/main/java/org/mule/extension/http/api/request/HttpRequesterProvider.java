@@ -57,6 +57,7 @@ public class HttpRequesterProvider implements ConnectionProvider<HttpRequesterCo
      * Host where the requests will be sent.
      */
     @Parameter
+    @Optional
     private Function<MuleEvent, String> host;
 
     /**
