@@ -43,6 +43,7 @@ import org.mule.runtime.module.http.internal.multipart.HttpPartDataSource;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Map;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,13 +63,13 @@ public class HttpResponseBuilder extends HttpMessageBuilder
      */
     @Parameter
     @Optional
-    private Integer statusCode;
+    private Function<MuleEvent, Integer> statusCode;
     /**
      * HTTP reason phrase the response should have.
      */
     @Parameter
     @Optional
-    private String reasonPhrase;
+    private Function<MuleEvent, String> reasonPhrase;
 
     private HttpStreamingType responseStreaming = AUTO;
     private boolean multipartEntityWithNoMultipartContentyTypeWarned;
@@ -184,11 +185,11 @@ public class HttpResponseBuilder extends HttpMessageBuilder
 
         if (statusCode != null)
         {
-            httpResponseBuilder.setStatusCode(statusCode);
+            httpResponseBuilder.setStatusCode(statusCode.apply(event));
         }
         if (reasonPhrase != null)
         {
-            httpResponseBuilder.setReasonPhrase(reasonPhrase);
+            httpResponseBuilder.setReasonPhrase(reasonPhrase.apply(event));
         }
         httpResponseBuilder.setEntity(httpEntity);
         return httpResponseBuilder.build();
